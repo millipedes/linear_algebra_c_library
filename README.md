@@ -1,10 +1,10 @@
-## Linear Algebra Library for C
+# Linear Algebra Library for C
 
-# An Overveiw
+## An Overveiw
 This is a library of C functions that work with matrices.  It is still
 currently in development and lacking many features.
 
-# Current Features
+## Current Features
 This library supports a type `matrix_t` that is to be declared as follows:
 ```
 	matrix_t * matrix = init_matrix(string-declaration-of-matrix);
