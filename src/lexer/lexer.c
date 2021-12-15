@@ -9,9 +9,10 @@
 
 #include"include/lexer.h"
 #include"../constants/include/constants.h"
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
 
 /**
  * This function initializes a lexer structure
@@ -123,8 +124,72 @@ void reset_lexer(lexer_t * lexer) {
 }  
 
 int ** lex_matrix(lexer_t * lexer) {
-	return NULL;
+	int count_rows = 1;
+	int max_rows = 2;
+	int count_comp = 1;
+	int max_comp = 2;
+	int ** matrix = calloc(max_rows, sizeof(int *));
+
+	while(lexer->c != '[') {
+		lexer_advance(lexer);
+	}
+	lexer_advance(lexer);
+	
+	while(lexer->c != ']') {
+		if(count_rows > max_rows) {
+			matrix = realloc(matrix, 2*count_rows*sizeof(int *));
+			max_rows *= 2;
+		}
+		*(matrix + count_rows - 1) = calloc(max_comp, sizeof(int));
+		// This loop processes rows
+		while(lexer->c != ';' && lexer->c != ']') {
+			if(count_comp > max_comp) {
+				*(matrix + count_rows - 1) = realloc(*(matrix + count_rows - 1), 2*count_comp*sizeof(int));
+				max_comp *= 2;
+			}
+
+			if(lexer->c == ' ') {
+				lexer_advance(lexer);
+			} else if(isdigit(lexer->c)) {
+				*(*(matrix + count_rows - 1) + count_comp - 1) = lex_int(lexer);
+				count_comp++;
+			}
+		}
+		count_comp = 1;
+		max_comp = 2;
+		if(lexer->c == ';') {
+			lexer_advance(lexer);
+		}
+		if(lexer->c == ' ') {
+			lexer_advance(lexer);
+		}
+		count_rows++;
+	}
+
+	if(strchr(lexer->src, '\'')) {
+		matrix = transpose_matrix(matrix, count_rows, count_comp);
+	}
+
+	return matrix;
 }  
+
+int lex_int(lexer_t * lexer) {
+	int count = 0;
+	char * number = calloc(lexer->len - lexer->c_pos, sizeof(char));
+
+	while(isdigit(lexer->c)) {
+		*(number + count) = lexer->c;
+		lexer_advance(lexer);
+		count++;
+	}
+	int tmp = atoi(number);
+	free(number);
+	return tmp;
+}
+
+int ** transpose_matrix(int ** matrix, int rows, int cols) {
+	return NULL;
+}
 
 /**
  * This function frees the lexer.  (It is never feed DA src i.e. src cant be freed)
@@ -135,3 +200,31 @@ void free_lexer(lexer_t * lexer) {
 	free(lexer);
 }
 
+/**
+ * This function is just a demo of the correct input format
+ * @param N/a
+ * @return N/a
+ */
+void lexer_function_tests(void) {
+	lexer_t * lexer1 = init_lexer("v = [1 2 3; 4 5 6]\n");
+	lexer_t * lexer2 = init_lexer("u = [1 2; 3 4; 5 6]'\n");
+	char * name1 = lex_id(lexer1);
+	char * name2 = lex_id(lexer2);
+	int * rows1 = lex_dims(lexer1);
+	int * rows2 = lex_dims(lexer2);
+	int ** matrix1 = lex_matrix(lexer1);
+	for(int i = 0; i < *(rows1 + 0); i++) {
+		for(int j = 0; j < *(rows1 + 1); j++) {
+			printf("%d ", *(*(matrix1 + i) + j));
+		}
+		printf("\n");
+	}
+	printf("[NAME1]: `%s`, [ROWS1]: %d, [COLS1]: %d\n", name1, *rows1, *(rows1 + 1));
+	printf("[NAME2]: `%s`, [ROWS2]: %d, [COLS2]: %d\n", name2, *rows2, *(rows2 + 1));
+	free(name1);
+	free(name2);
+	free(rows1);
+	free(rows2);
+	free_lexer(lexer1);
+	free_lexer(lexer2);
+}

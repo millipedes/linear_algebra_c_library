@@ -22,6 +22,9 @@ char * lex_id(lexer_t * lexer);
 int * lex_dims(lexer_t * lexer);
 void reset_lexer(lexer_t * lexer);
 int ** lex_matrix(lexer_t * lexer);
+int lex_int(lexer_t * lexer);
+int ** transpose_matrix(int ** matrix, int rows, int cols);
 void free_lexer(lexer_t * lexer);
+void lexer_function_tests(void);
 
 #endif
