@@ -11,8 +11,13 @@ This library supports a type `matrix_t` that is to be declared as follows:
 ```
 Where string-declaration-of-matrix is a string of the following format:
 ```
-	name_of_matrix = [elem1 elem2 ... elemN; elem1 elem2 ... elemN; ... ]
+	name_of_matrix = [elem1 elem2 ... elemN; elem1 elem2 ... elemN; ...]
 ```
+Similar to how MATLAB and octave define matrices (the above is semi-whitespace
+dependent and whitespace should be noted).
+
+
 This will generate a `matrix_t` object for which the following operations are supported:
  - addition
  - subtraction
+ - Transposition Operator '
