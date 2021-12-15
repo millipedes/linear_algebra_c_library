@@ -123,6 +123,12 @@ void reset_lexer(lexer_t * lexer) {
 	lexer->c_pos = 0;
 }  
 
+/**
+ * This function parses a matrix defined by the user and returns an integer
+ * pointer with the values that the user passed
+ * @param the lexer with a valid matrix definition
+ * @return the integer pointer containing the components of the matrix
+ */
 int ** lex_matrix(lexer_t * lexer) {
 	int count_rows = 1;
 	int max_rows = 2;
@@ -173,6 +179,11 @@ int ** lex_matrix(lexer_t * lexer) {
 	return matrix;
 }  
 
+/**
+ * This function parses an integer (assuming that the lexer is pointing to one)
+ * @param the lexer
+ * @return the integer
+ */
 int lex_int(lexer_t * lexer) {
 	int count = 0;
 	char * number = calloc(lexer->len - lexer->c_pos, sizeof(char));
