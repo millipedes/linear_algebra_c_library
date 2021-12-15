@@ -175,6 +175,8 @@ int ** lex_matrix(lexer_t * lexer) {
 	if(strchr(lexer->src, '\'')) {
 		matrix = transpose_matrix(matrix, 3, 2);
 	}
+	// lexer is reset after all functions to give a standard
+	reset_lexer(lexer);
 
 	return matrix;
 }  
