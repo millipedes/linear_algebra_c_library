@@ -24,6 +24,7 @@ matrix_t * init_matrix(char * ui) {
 	matrix->id = lex_id(lexer);
 	matrix->matrix = lex_matrix(lexer);
 	matrix->row_col = lex_dims(lexer);
+	free_lexer(lexer);
 	return matrix;
 }
 
