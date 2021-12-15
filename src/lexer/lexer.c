@@ -198,6 +198,12 @@ int lex_int(lexer_t * lexer) {
 	return tmp;
 }
 
+/**
+ * This function takes in a matrix represention as an integer pointer and
+ * performs a trasposition of the data
+ * @param the matrix and the number of columns and rows of the initial matrix
+ * @return the transposed data
+ */
 int ** transpose_matrix(int ** matrix, int rows, int cols) {
 	int ** matrix_t = NULL;
 	// columns of matrix are rows of matrix_t
@@ -259,6 +265,14 @@ void lexer_function_tests(void) {
 	}
 	printf("[NAME1]: `%s`, [ROWS1]: %d, [COLS1]: %d\n", name1, *rows1, *(rows1 + 1));
 	printf("[NAME2]: `%s`, [ROWS2]: %d, [COLS2]: %d\n", name2, *rows2, *(rows2 + 1));
+	for(int i = 0; i < *(rows1 + 0); i++) {
+		free(*(matrix1 + i));
+	}
+	free(matrix1);
+	for(int i = 0; i < *(rows2 + 0); i++) {
+		free(*(matrix2 + i));
+	}
+	free(matrix2);
 	free(name1);
 	free(name2);
 	free(rows1);
