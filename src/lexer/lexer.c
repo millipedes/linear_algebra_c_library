@@ -173,7 +173,7 @@ int ** lex_matrix(lexer_t * lexer) {
 	}
 
 	if(strchr(lexer->src, '\'')) {
-		matrix = transpose_matrix(matrix, count_rows, count_comp);
+		matrix = transpose_matrix(matrix, 3, 2);
 	}
 
 	return matrix;
@@ -199,7 +199,25 @@ int lex_int(lexer_t * lexer) {
 }
 
 int ** transpose_matrix(int ** matrix, int rows, int cols) {
-	return NULL;
+	int ** matrix_t = NULL;
+	// columns of matrix are rows of matrix_t
+	matrix_t = calloc(cols, sizeof(int *));
+	for(int i = 0; i < cols; i++) {
+		// rows of matrix are cols of matrix_t
+		*(matrix_t + i) = calloc(rows, sizeof(int));
+	}
+
+	for(int i = 0; i < cols; i++) {
+		for(int j = 0; j < rows; j++) {
+			*(*(matrix_t + i) + j) = *(*(matrix + j) + i);
+		}
+	}
+
+	for(int i = 0; i < rows; i++) {
+		free(*(matrix + i));
+	}
+	free(matrix);
+	return matrix_t;
 }
 
 /**
@@ -224,11 +242,20 @@ void lexer_function_tests(void) {
 	int * rows1 = lex_dims(lexer1);
 	int * rows2 = lex_dims(lexer2);
 	int ** matrix1 = lex_matrix(lexer1);
+	int ** matrix2 = lex_matrix(lexer2);
 	for(int i = 0; i < *(rows1 + 0); i++) {
+		printf("| ");
 		for(int j = 0; j < *(rows1 + 1); j++) {
 			printf("%d ", *(*(matrix1 + i) + j));
 		}
-		printf("\n");
+		printf("|\n");
+	}
+	for(int i = 0; i < *(rows2 + 0); i++) {
+		printf("| ");
+		for(int j = 0; j < *(rows2 + 1); j++) {
+			printf("%d ", *(*(matrix2 + i) + j));
+		}
+		printf("|\n");
 	}
 	printf("[NAME1]: `%s`, [ROWS1]: %d, [COLS1]: %d\n", name1, *rows1, *(rows1 + 1));
 	printf("[NAME2]: `%s`, [ROWS2]: %d, [COLS2]: %d\n", name2, *rows2, *(rows2 + 1));
