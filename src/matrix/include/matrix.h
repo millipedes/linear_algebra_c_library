@@ -16,6 +16,8 @@ typedef struct MATRIX_T {
 } matrix_t;
 
 matrix_t * init_matrix(char * ui);
+matrix_t * init_matrix_from_params(char * id, int rows, int cols, int ** matrix);
+matrix_t * matrix_copy(matrix_t * matrix);
 int matrix_finder(matrix_t ** matrix_list, int list_size, char * name);
 matrix_t * matrix_addition(matrix_t * matrix1, matrix_t * matrix2);
 matrix_t * matrix_substraction(matrix_t * matrix1, matrix_t * matrix2);

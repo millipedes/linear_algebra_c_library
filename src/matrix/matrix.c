@@ -29,6 +29,63 @@ matrix_t * init_matrix(char * ui) {
 }
 
 /**
+ * This function takes in the parameters required to make a matrix_t struct
+ * and makes a copy (deep) from the parameters
+ * @param the id of the new matrix, the number of row and cols of new matrix
+ * and the componenets of the matrix
+ * @return the newly formed matrix
+ */
+matrix_t * init_matrix_from_params(char * id, int rows, int cols, int ** matrix) {
+	matrix_t * init_matrix = calloc(1, sizeof(struct MATRIX_T));
+	init_matrix->id = calloc(strnlen(id, MAX_LEN), sizeof(char));
+	init_matrix->row_col = calloc(2, sizeof(int));
+	init_matrix->matrix = calloc(rows, sizeof(int *));
+	for(int i = 0; i < rows; i++) {
+		init_matrix->matrix[i] = calloc(cols, sizeof(int));
+	}
+	for(int i = 0; i < strnlen(id, MAX_LEN); i++) {
+		init_matrix->id[i] = id[i];
+	}
+	init_matrix->row_col[0] = rows;
+	init_matrix->row_col[1] = cols;
+
+	for(int i = 0; i < rows; i++) {
+		for(int j = 0; j < cols; j++) {
+			init_matrix->matrix[i][j] = matrix[i][j];
+		}
+	}
+	return init_matrix;
+}
+
+/**
+ * This function creates an exact (deep) copy (i.e. needs to be freed
+ * seperately), of the matrix that is input.
+ * @param The matrix to be copied
+ * @return The deep copy
+ */
+matrix_t * matrix_copy(matrix_t * matrix) {
+	matrix_t * copy = calloc(1, sizeof(struct MATRIX_T));
+	copy->id = calloc(strnlen(matrix->id, MAX_LEN), sizeof(char));
+	copy->row_col = calloc(2, sizeof(int));
+	copy->matrix = calloc(matrix->row_col[0], sizeof(int *));
+	for(int i = 0; i < matrix->row_col[0]; i++) {
+		copy->matrix[i] = calloc(matrix->row_col[1], sizeof(int));
+	}
+	for(int i = 0; i < strnlen(matrix->id, MAX_LEN); i++) {
+		copy->id[i] = matrix->id[i];
+	}
+	copy->row_col[0] = matrix->row_col[0];
+	copy->row_col[1] = matrix->row_col[1];
+
+	for(int i = 0; i < copy->row_col[0]; i++) {
+		for(int j = 0; j < copy->row_col[1]; j++) {
+			copy->matrix[i][j] = matrix->matrix[i][j];
+		}
+	}
+	return copy;
+}
+
+/**
  * This function find the matrix with the specified name and returns the index of it
  * @param the list of matrices from which it is to be found
  * @return the matrix with the desired name (or exits with an error)
@@ -48,16 +105,36 @@ int matrix_finder(matrix_t ** matrix_list, int list_size, char * name) {
  * @return the resulting matrix of the addition
  */
 matrix_t * matrix_addition(matrix_t * matrix1, matrix_t * matrix2) {
-	return NULL; 
+	if(matrix1->row_col[0] != matrix2->row_col[0] || matrix1->row_col[1] != matrix2->row_col[1]) {
+		fprintf(stderr, "[ERROR]: add_matrix given two matrices of different dimensions");
+		exit(1);
+	}
+	matrix_t * result = matrix_copy(matrix1);
+	for(int i = 0; i < result->row_col[0]; i++) {
+		for(int j = 0; j < result->row_col[1]; j++) {
+			result->matrix[i][j] += matrix2->matrix[i][j];
+		}
+	}
+	return result; 
 }
 
 /**
- * This function takes two matrices and substracts them if possible erros if not
+ * This function takes two matrices and substracts them if possible errors if not
  * @param The two matrices to be subtracted
  * @return the resulting matrix of the subtraction
  */
 matrix_t * matrix_substraction(matrix_t * matrix1, matrix_t * matrix2) {
- 	return NULL;
+	if(matrix1->row_col[0] != matrix2->row_col[0] || matrix1->row_col[1] != matrix2->row_col[1]) {
+		fprintf(stderr, "[ERROR]: add_matrix given two matrices of different dimensions");
+		exit(1);
+	}
+	matrix_t * result = matrix_copy(matrix1);
+	for(int i = 0; i < result->row_col[0]; i++) {
+		for(int j = 0; j < result->row_col[1]; j++) {
+			result->matrix[i][j] -= matrix2->matrix[i][j];
+		}
+	}
+	return result; 
 }
 
 /**
@@ -66,7 +143,8 @@ matrix_t * matrix_substraction(matrix_t * matrix1, matrix_t * matrix2) {
  * @return the resulting matrix
  */
 matrix_t * matrix_multiply(matrix_t * matrix1, matrix_t * matrix2) {
-	 return NULL;
+	matrix_t * result = calloc(1, sizeof(struct MATRIX_T));
+	return result;
 }
 
 /**
@@ -93,7 +171,6 @@ void print_matrix(matrix_t * matrix) {
 		printf("|\n");
 	}
 }
-
 /**
  * This function frees the matrix
  * @param The matrix
@@ -115,7 +192,16 @@ void free_matrix(matrix_t * matrix) {
  * @return N/a
  */
 void matrix_tests(void) {
-	matrix_t * matrix = init_matrix("v = [15 2 3; 4 5 26; 7 18 9]\n");
-	print_matrix(matrix);
-	free_matrix(matrix);
+	matrix_t * matrix1 = init_matrix("v = [15 2 3; 4 5 26; 7 18 9]\n");
+	matrix_t * matrix2 = init_matrix("u = [15 2 3; 4 5 26; 7 18 9]\n");
+	print_matrix(matrix1);
+	print_matrix(matrix2);
+	matrix_t * matrix_addr = matrix_addition(matrix1, matrix2);
+	matrix_t * matrix_subr = matrix_substraction(matrix1, matrix2);
+	print_matrix(matrix_addr);
+	print_matrix(matrix_subr);
+	free_matrix(matrix1);
+	free_matrix(matrix2);
+	free_matrix(matrix_addr);
+	free_matrix(matrix_subr);
 }
