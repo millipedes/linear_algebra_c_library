@@ -143,7 +143,33 @@ matrix_t * matrix_substraction(matrix_t * matrix1, matrix_t * matrix2) {
  * @return the resulting matrix
  */
 matrix_t * matrix_multiply(matrix_t * matrix1, matrix_t * matrix2) {
-	matrix_t * result = calloc(1, sizeof(struct MATRIX_T));
+	if(matrix1->row_col[0] != matrix2->row_col[1]) {
+		fprintf(stderr, "[ERROR]: matrices of incorrect dimensions were passed to matrix_multiply\nMaybe check order");
+		exit(1);
+	}
+	// dimenion of resulting matrix will be row1xcol2
+	int ** result_matrix = calloc(matrix1->row_col[0], sizeof(int *));
+	for (int i = 0; i < matrix1->row_col[0]; ++i) {
+		*(result_matrix + i) = calloc(matrix2->row_col[1], sizeof(int));
+	}
+
+	for (int i = 0; i < matrix1->row_col[0]; i++) {
+		for (int j = 0; j < matrix2->row_col[1]; j++) {
+			for(int k = 0; k < matrix2->row_col[1]; k++) {
+				result_matrix[i][j] += (matrix1->matrix[i][k] * matrix2->matrix[k][j]);
+			}
+		}
+	}
+
+	matrix_t * result = init_matrix_from_params("result", matrix1->row_col[0], matrix2->row_col[1], result_matrix);
+
+	//Since result is a deep copy, unnfortunately result_matrix needs to be freed
+	if (result_matrix) {
+		for (int i = 0; i < matrix1->row_col[0]; i++) {
+			free(*(result_matrix + i));
+		}
+		free(result_matrix);
+	}
 	return result;
 }
 
@@ -198,10 +224,13 @@ void matrix_tests(void) {
 	print_matrix(matrix2);
 	matrix_t * matrix_addr = matrix_addition(matrix1, matrix2);
 	matrix_t * matrix_subr = matrix_substraction(matrix1, matrix2);
+	matrix_t * matrix_mult = matrix_multiply(matrix1, matrix2);
 	print_matrix(matrix_addr);
 	print_matrix(matrix_subr);
+	print_matrix(matrix_mult);
 	free_matrix(matrix1);
 	free_matrix(matrix2);
 	free_matrix(matrix_addr);
 	free_matrix(matrix_subr);
+	free_matrix(matrix_mult);
 }
