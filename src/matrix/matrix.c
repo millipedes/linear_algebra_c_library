@@ -163,7 +163,7 @@ matrix_t * matrix_multiply(matrix_t * matrix1, matrix_t * matrix2) {
 
 	matrix_t * result = init_matrix_from_params("result", matrix1->row_col[0], matrix2->row_col[1], result_matrix);
 
-	//Since result is a deep copy, unnfortunately result_matrix needs to be freed
+	// Since result is a deep copy, unnfortunately result_matrix needs to be freed
 	if (result_matrix) {
 		for (int i = 0; i < matrix1->row_col[0]; i++) {
 			free(*(result_matrix + i));
